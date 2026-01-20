@@ -30,9 +30,9 @@ SECRET_KEY = os.environ.get('SECRET_KEY', '')
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    '192.168.18.186',
-    'localhost',
-    '127.0.0.1',
+    "miniworld.info",
+    "www.miniworld.info",
+    "192.168.18.186"
 ]
 
 
