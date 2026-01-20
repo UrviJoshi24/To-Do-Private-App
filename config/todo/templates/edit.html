@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Task</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        h2 {
+            text-align: center;
+            color: #2d3748;
+            font-size: 32px;
+            margin-bottom: 35px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+        
+        form {
+            margin-bottom: 25px;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            outline: none;
+            background: #f7fafc;
+            margin-bottom: 20px;
+        }
+        
+        input[type="text"]:focus {
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        button {
+            width: 100%;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #667eea;
+            font-size: 15px;
+            font-weight: 600;
+            padding: 12px 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .back-link:hover {
+            background: white;
+            border-color: #667eea;
+            transform: translateX(-3px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+        
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+            margin: 25px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>✏️ Edit Task</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="task" value="{{ task }}" required autofocus>
+        <button type="submit">Update Task</button>
+    </form>
+
+    <div class="divider"></div>
+
+    <a href="{% url 'todo' %}" class="back-link">
+        ⬅ Back to List
+    </a>
+</div>
+</body>
+</html>

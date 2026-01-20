@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Django To-Do</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            max-width: 550px;
+            width: 100%;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        h2 {
+            text-align: center;
+            color: #2d3748;
+            font-size: 32px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+        
+        .add-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        input[type="text"] {
+            flex: 1;
+            padding: 14px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            outline: none;
+            background: #f7fafc;
+        }
+        
+        input[type="text"]:focus {
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        button {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        
+        .add-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-width: 100px;
+        }
+        
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .add-btn:active {
+            transform: translateY(0);
+        }
+        
+        .clear-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            width: 100%;
+            margin-bottom: 25px;
+        }
+        
+        .clear-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(245, 87, 108, 0.3);
+        }
+        
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        li {
+            background: linear-gradient(135deg, #f6f8fb 0%, #ffffff 100%);
+            margin: 12px 0;
+            padding: 18px 20px;
+            border-radius: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        li:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+            border-color: #cbd5e0;
+        }
+        
+        li span.task-text {
+            flex: 1;
+            color: #2d3748;
+            font-size: 15px;
+            font-weight: 500;
+        }
+        
+        li span.actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        a {
+            text-decoration: none;
+            font-size: 20px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        a:hover {
+            transform: scale(1.1);
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .empty-state {
+            text-align: center;
+            color: #a0aec0;
+            padding: 40px 20px;
+            font-size: 16px;
+        }
+        
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+            margin: 25px 0;
+        }
+        
+        /* Loader */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+            font-size: 18px;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        #loader.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid rgba(255, 255, 255, 0.3);
+            border-top: 6px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        body > .container {
+            opacity: 0;
+            transition: opacity 0.5s ease 0.3s;
+        }
+        
+        body.loaded > .container {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+<!-- Page Loader -->
+<div id="loader">
+    <div class="spinner"></div>
+    <p>Loading your tasks...</p>
+</div>
+
+<div class="container">
+    <h2>📝 To-Do List</h2>
+
+    <form method="POST" class="add-form">
+        {% csrf_token %}
+        <input type="text" name="task" placeholder="What needs to be done?" required>
+        <button type="submit" class="add-btn">Add</button>
+    </form>
+
+    <div class="divider"></div>
+
+    <form action="{% url 'clear' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="clear-btn">Clear All Tasks</button>
+    </form>
+
+    <ul>
+        {% for task in tasks %}
+            <li>
+                <span class="task-text">{{ task }}</span>
+                <span class="actions">
+                    <a href="{% url 'edit' forloop.counter0 %}" title="Edit">✏️</a>
+                    <a href="{% url 'delete' forloop.counter0 %}" title="Delete">❌</a>
+                </span>
+            </li>
+        {% empty %}
+            <li class="empty-state">
+                No tasks yet — add one to get started! 🚀
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<script>
+    window.addEventListener("load", function () {
+        const loader = document.getElementById("loader");
+        const body = document.body;
+        
+        // Add loaded class to body to fade in container
+        setTimeout(() => {
+            body.classList.add("loaded");
+            loader.classList.add("hide");
+        }, 500);
+        
+        // Remove loader from DOM after fade out
+        setTimeout(() => {
+            loader.style.display = "none";
+        }, 1000);
+    });
+</script>
+</body>
+</html>
